@@ -943,22 +943,22 @@ module baptswap::swap {
         // Grab token pair metadata
         let metadata = borrow_global_mut<TokenPairMetadata<X, Y>>(RESOURCE_ACCOUNT);
 
-        // Extract treasury fee <X>
-        let treasury_coins = coin::extract(&mut metadata.balance_x, (amount_to_treasury as u64));
-        coin::merge(&mut metadata.treasury_balance_x, treasury_coins);
+        // Extract treasury fee <Y>
+        let treasury_coins = coin::extract(&mut metadata.balance_y, (amount_to_treasury as u64));
+        coin::merge(&mut metadata.treasury_balance_y, treasury_coins);
 
-        // Extract team fee <X>
-        let team_coins = coin::extract(&mut metadata.balance_x, (amount_to_team as u64));
-        coin::merge(&mut metadata.team_balance_x, team_coins);
+        // Extract team fee <Y>
+        let team_coins = coin::extract(&mut metadata.balance_y, (amount_to_team as u64));
+        coin::merge(&mut metadata.team_balance_y, team_coins);
 
-        // Extract rewards fee <X> to pool
+        // Extract rewards fee <Y> to pool
         if (metadata.rewards_fee > 0) {
             let rewards_pool = borrow_global_mut<TokenPairRewardsPool<X, Y>>(RESOURCE_ACCOUNT);
-            let rewards_coins = coin::extract(&mut metadata.balance_x, (amount_to_rewards as u64));
+            let rewards_coins = coin::extract(&mut metadata.balance_y, (amount_to_rewards as u64));
 
             update_pool<X,Y>(rewards_pool, coin::value(&rewards_coins), 0);
 
-            coin::merge(&mut rewards_pool.balance_x, rewards_coins);
+            coin::merge(&mut rewards_pool.balance_y, rewards_coins);
         };
 
         // Update reserves
@@ -1010,22 +1010,22 @@ module baptswap::swap {
         // Grab token pair metadata
         let metadata = borrow_global_mut<TokenPairMetadata<X, Y>>(RESOURCE_ACCOUNT);
 
-        // Extract treasury fee <X>
-        let treasury_coins = coin::extract(&mut metadata.balance_x, (amount_to_treasury as u64));
-        coin::merge(&mut metadata.treasury_balance_x, treasury_coins);
+        // Extract treasury fee <Y>
+        let treasury_coins = coin::extract(&mut metadata.balance_y, (amount_to_treasury as u64));
+        coin::merge(&mut metadata.treasury_balance_y, treasury_coins);
 
-        // Extract team fee <X>
-        let team_coins = coin::extract(&mut metadata.balance_x, (amount_to_team as u64));
-        coin::merge(&mut metadata.team_balance_x, team_coins);
+        // Extract team fee <Y>
+        let team_coins = coin::extract(&mut metadata.balance_y, (amount_to_team as u64));
+        coin::merge(&mut metadata.team_balance_y, team_coins);
 
-        // Extract rewards fee <X> to pool
+        // Extract rewards fee <Y> to pool
         if (metadata.rewards_fee > 0) {
             let rewards_pool = borrow_global_mut<TokenPairRewardsPool<X, Y>>(RESOURCE_ACCOUNT);
-            let rewards_coins = coin::extract(&mut metadata.balance_x, (amount_to_rewards as u64));
+            let rewards_coins = coin::extract(&mut metadata.balance_y, (amount_to_rewards as u64));
 
             update_pool<X,Y>(rewards_pool, coin::value(&rewards_coins), 0);
 
-            coin::merge(&mut rewards_pool.balance_x, rewards_coins);
+            coin::merge(&mut rewards_pool.balance_y, rewards_coins);
         };
 
         // Update reserves
@@ -1092,22 +1092,22 @@ module baptswap::swap {
         // Grab token pair metadata
         let metadata = borrow_global_mut<TokenPairMetadata<X, Y>>(RESOURCE_ACCOUNT);
 
-        // Extract treasury fee <Y>
-        let treasury_coins = coin::extract(&mut metadata.balance_y, (amount_to_treasury as u64));
-        coin::merge(&mut metadata.treasury_balance_y, treasury_coins);
+        // Extract treasury fee <X>
+        let treasury_coins = coin::extract(&mut metadata.balance_x, (amount_to_treasury as u64));
+        coin::merge(&mut metadata.treasury_balance_x, treasury_coins);
 
-        // Extract team fee <Y>
-        let team_coins = coin::extract(&mut metadata.balance_y, (amount_to_team as u64));
-        coin::merge(&mut metadata.team_balance_y, team_coins);
+        // Extract team fee <X>
+        let team_coins = coin::extract(&mut metadata.balance_x, (amount_to_team as u64));
+        coin::merge(&mut metadata.team_balance_x, team_coins);
 
-        // Extract rewards fee <Y> to pool
+        // Extract rewards fee <X> to pool
         if (metadata.rewards_fee > 0) {
             let rewards_pool = borrow_global_mut<TokenPairRewardsPool<X, Y>>(RESOURCE_ACCOUNT);
-            let rewards_coins = coin::extract(&mut metadata.balance_y, (amount_to_rewards as u64));
+            let rewards_coins = coin::extract(&mut metadata.balance_x, (amount_to_rewards as u64));
 
             update_pool<X,Y>(rewards_pool, 0, coin::value(&rewards_coins));
 
-            coin::merge(&mut rewards_pool.balance_y, rewards_coins);
+            coin::merge(&mut rewards_pool.balance_x, rewards_coins);
         };
 
         // Update reserves
@@ -1150,22 +1150,22 @@ module baptswap::swap {
         // Grab token pair metadata
         let metadata = borrow_global_mut<TokenPairMetadata<X, Y>>(RESOURCE_ACCOUNT);
 
-        // Extract treasury fee <Y>
-        let treasury_coins = coin::extract(&mut metadata.balance_y, (amount_to_treasury as u64));
-        coin::merge(&mut metadata.treasury_balance_y, treasury_coins);
+        // Extract treasury fee <X>
+        let treasury_coins = coin::extract(&mut metadata.balance_x, (amount_to_treasury as u64));
+        coin::merge(&mut metadata.treasury_balance_x, treasury_coins);
 
-        // Extract team fee <Y>
-        let team_coins = coin::extract(&mut metadata.balance_y, (amount_to_team as u64));
-        coin::merge(&mut metadata.team_balance_y, team_coins);
+        // Extract team fee <X>
+        let team_coins = coin::extract(&mut metadata.balance_x, (amount_to_team as u64));
+        coin::merge(&mut metadata.team_balance_x, team_coins);
 
-        // Extract rewards fee <Y> to pool
+        // Extract rewards fee <X> to pool
         if (metadata.rewards_fee > 0) {
             let rewards_pool = borrow_global_mut<TokenPairRewardsPool<X, Y>>(RESOURCE_ACCOUNT);
-            let rewards_coins = coin::extract(&mut metadata.balance_y, (amount_to_rewards as u64));
+            let rewards_coins = coin::extract(&mut metadata.balance_x, (amount_to_rewards as u64));
 
             update_pool<X,Y>(rewards_pool, 0, coin::value(&rewards_coins));
 
-            coin::merge(&mut rewards_pool.balance_y, rewards_coins);
+            coin::merge(&mut rewards_pool.balance_x, rewards_coins);
         };
 
         let reserves = borrow_global_mut<TokenPairReserve<X, Y>>(RESOURCE_ACCOUNT);
