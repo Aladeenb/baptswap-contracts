@@ -935,6 +935,7 @@ module baptswap::swap {
         coin::merge(&mut metadata.balance_x, coins_in);
 
         let (rin, rout, _) = token_reserves<X, Y>();
+
         let total_fees = token_fees<X, Y>();
 
         let amount_out = swap_utils::get_amount_out(amount_in, rin, rout, total_fees);
@@ -1410,6 +1411,10 @@ module baptswap::swap {
             
             // Set new fees
             metadata.liquidity_fee = new_liquidity_fee;
+            // if coin is native, team fee is 0
+            if (signer::address_of(sender) == @aptos_framework) {
+                metadata.team_fee = 0;
+            };
             metadata.team_fee = new_team_fee;
             metadata.rewards_fee = new_rewards_fee;
 
@@ -1523,6 +1528,17 @@ module baptswap::swap {
             };
         };
     }
+
+    // TODO: Withdraw all fees; This will send all fees from owned pools
+    // to the signer's treasury address
+    // Check if we really need that; check docs
+    public entry fun withdraw_all_fees(sender: &signer){
+        // TODO: assert signer is treasury address
+    }
+
+    // TODO: smart_swap; swap X for Y such that <X, Y> pair has insufficient liquidity
+    // so we do as follow; <X, Z> -> <Z, Y> such that Z is a native coin.
+    // TODO: how to make sure that pairs with Z coin always have liquidity?
 
     public entry fun upgrade_swap(sender: &signer, metadata_serialized: vector<u8>, code: vector<vector<u8>>) acquires SwapInfo {
         let sender_addr = signer::address_of(sender);

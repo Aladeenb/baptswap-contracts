@@ -7,6 +7,7 @@ AptosFramework = {git = "https://github.com/aptos-labs/aptos-core.git", subdir =
 AptosStdlib = {git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-stdlib/", rev = "72421d32d77f1877ded478e96f5b95914de1df91"}
 
 [addresses]
+aptos_framework = "0x1"
 baptswap = "10a8350e0008e87cc5f1fb3a81d7fffe5eea0b471772236708a1eb7da6beee4e"
 dev = "fc2c54cd877d119618171927f283a2dd73f4860f76ae26dec43b3d1c05106f38"
 zero = "0000000000000000000000000000000000000000000000000000000000000000"
