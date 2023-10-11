@@ -1,6 +1,7 @@
 module baptswap::router {
     use baptswap::swap;
     use std::signer;
+    use aptos_std::type_info;
     use aptos_framework::aptos_coin::{AptosCoin};
     use aptos_framework::coin;
     use baptswap::swap_utils;
@@ -195,7 +196,7 @@ module baptswap::router {
             let (rin, rout, _) = swap::token_reserves<X, Y>();
             // if output amount reserve is 0; use APT instead of Y
             if (rout == 0) {
-                // TODO: assert Y is not APT
+                assert!(type_info::type_of<X>() != type_info::type_of<AptosCoin>(), 1);
                 let (rin, aptrout, _) = swap::token_reserves<X, AptosCoin>();
 
                 let total_fees = swap::token_fees<X, AptosCoin>();
@@ -212,7 +213,7 @@ module baptswap::router {
             let (rout, rin, _) = swap::token_reserves<Y, X>();
             
             if (rout == 0) {
-                // TODO: assert Y is not APT
+                assert!(type_info::type_of<X>() != type_info::type_of<AptosCoin>(), 1);
                 let (rin, aptrout, _) = swap::token_reserves<Y, AptosCoin>();
 
                 let total_fees = swap::token_fees<Y, AptosCoin>();
