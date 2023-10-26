@@ -289,15 +289,15 @@ module baptswap::swap_v2 {
         let signer_addr = signer::address_of(signer_ref);
         let swap_info = borrow_global_mut<SwapInfo>(RESOURCE_ACCOUNT);
         // assert!(signer_addr == swap_info.admin, ERROR_ONLY_ADMIN);
-        assert!(!exists<DexFeeThreshold>(RESOURCE_ACCOUNT), ERROR_ALREADY_INITIALIZED);
-        assert!(!exists<IndividualTokenFeeThreshold>(RESOURCE_ACCOUNT), ERROR_ALREADY_INITIALIZED);
         let resource_signer = account::create_signer_with_capability(&swap_info.signer_cap);
         if (type_info::type_of<FeeThreshold>() == type_info::type_of<DexFeeThreshold>()) {
-            move_to(&resource_signer, IndividualTokenFeeThreshold {
+            assert!(!exists<DexFeeThreshold>(RESOURCE_ACCOUNT), ERROR_ALREADY_INITIALIZED);
+            move_to(&resource_signer, DexFeeThreshold {
                 numenator: MAX_DEX_FEE_THRESHOLD_NUMERATOR,
                 denominator: MAX_DEX_FEE_THRESHOLD_DENOMINATOR
             });
         } else if (type_info::type_of<FeeThreshold>() == type_info::type_of<IndividualTokenFeeThreshold>()) {
+            assert!(!exists<IndividualTokenFeeThreshold>(RESOURCE_ACCOUNT), ERROR_ALREADY_INITIALIZED);
             move_to(&resource_signer, IndividualTokenFeeThreshold {
                 numenator: MAX_INDIVIDUAL_TOKEN_FEE_THRESHOLD_NUMERATOR,
                 denominator: MAX_INDIVIDUAL_TOKEN_FEE_THRESHOLD_DENOMINATOR
@@ -1587,7 +1587,7 @@ module baptswap::swap_v2 {
         } else {
             let metadata = borrow_global_mut<TokenPairMetadata<Y, X>>(RESOURCE_ACCOUNT);
             let sender_addr = signer::address_of(sender);
-            assert!(sender_addr == metadata.owner, ERROR_NOT_OWNER);
+            assert!(sender_addr == metadata.creator, ERROR_NOT_OWNER);
             // Set new owner
             metadata.owner = new_owner;
         }
