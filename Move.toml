@@ -8,7 +8,7 @@ AptosStdlib = {git = "https://github.com/aptos-labs/aptos-core.git", subdir = "a
 
 [addresses]
 aptos_framework = "0x1"
-baptswap = "0xccae560982f52baf67611c6c551fbda2e9c7f09126124f97060ba5a7ba39e78b"
+baptswap = "12620035d50861bb826effcd3c62715a87b6bc6c4cc5c64d2a4bf9f9684e9ed6"
 dev = "fc2c54cd877d119618171927f283a2dd73f4860f76ae26dec43b3d1c05106f38"
 zero = "0000000000000000000000000000000000000000000000000000000000000000"
 default_admin = "efb4da60354e5b2f419ee71fb277677a7c1b8cb1a3d4bbf0455d561ebf199eef"

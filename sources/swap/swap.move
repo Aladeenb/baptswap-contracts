@@ -187,7 +187,7 @@ module baptswap::swap {
     */
 
     fun init_module(sender: &signer) {
-        let signer_cap = resource_account::retrieve_resource_account_cap(sender, DEV);
+        let (_, signer_cap) = account::create_resource_account(sender, b"baptswap");
         let resource_signer = account::create_signer_with_capability(&signer_cap);
         move_to(&resource_signer, SwapInfo {
             signer_cap,
