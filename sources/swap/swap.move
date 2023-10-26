@@ -22,7 +22,6 @@ module baptswap::swap {
     const DEFAULT_ADMIN: address = @default_admin;
     const RESOURCE_ACCOUNT: address = @baptswap;
     const DEV: address = @dev;
-    const SEED: vector<u8> = b"baptswap";
     const MINIMUM_LIQUIDITY: u128 = 1000;
     const MAX_COIN_NAME_LENGTH: u64 = 32;
 
@@ -188,7 +187,7 @@ module baptswap::swap {
     */
 
     fun init_module(sender: &signer) {
-        let (_, signer_cap) = account::create_resource_account(sender, SEED);
+        let signer_cap = resource_account::retrieve_resource_account_cap(sender, DEV);
         let resource_signer = account::create_signer_with_capability(&signer_cap);
         move_to(&resource_signer, SwapInfo {
             signer_cap,
