@@ -1,6 +1,8 @@
 module baptswap::router {
     use baptswap::swap;
     use std::signer;
+    use aptos_std::type_info;
+    use aptos_framework::aptos_coin::{AptosCoin};
     use aptos_framework::coin;
     use baptswap::swap_utils;
 
@@ -18,6 +20,10 @@ module baptswap::router {
     const E_INSUFFICIENT_Y_AMOUNT: u64 = 3;
     /// Pair is not created
     const E_PAIR_NOT_CREATED: u64 = 4;
+    // Pool already created
+    const E_POOL_EXISTS: u64 = 5;
+    // Pool not created
+    const E_POOL_NOT_CREATED: u64 = 6;
 
     /// Create a Pair from 2 Coins
     /// Should revert if the pair is already created
@@ -31,14 +37,61 @@ module baptswap::router {
         }
     }
 
-    public entry fun deploy_coin(
+    public entry fun create_rewards_pool<X, Y>(
         sender: &signer,
-        name: vector<u8>,
-        symbol: vector<u8>
+        is_x_staked: bool
     ) {
-        swap::deploy_coin(sender, name, symbol);
+        assert!(((swap::is_pair_created<X, Y>() || swap::is_pair_created<Y, X>())), E_PAIR_NOT_CREATED);
+        assert!(!((swap::is_pool_created<X, Y>() || swap::is_pool_created<Y, X>())), E_POOL_EXISTS);
+
+        if (swap_utils::sort_token_type<X, Y>()) {
+            swap::init_rewards_pool<X, Y>(sender, is_x_staked);
+        } else {
+            swap::init_rewards_pool<Y, X>(sender, !is_x_staked);
+        }
     }
 
+    public entry fun stake_tokens_in_pool<X, Y>(
+        sender: &signer,
+        amount: u64
+    ) {
+        assert!(((swap::is_pair_created<X, Y>() || swap::is_pair_created<Y, X>())), E_PAIR_NOT_CREATED);
+        assert!(((swap::is_pool_created<X, Y>() || swap::is_pool_created<Y, X>())), E_POOL_NOT_CREATED);
+
+        if (swap_utils::sort_token_type<X, Y>()) {
+            swap::stake_tokens<X, Y>(sender, amount);
+        } else {
+            swap::stake_tokens<Y, X>(sender, amount);
+        }
+    }
+
+
+    public entry fun withdraw_tokens_from_pool<X, Y>(
+        sender: &signer,
+        amount: u64
+    ) {
+        assert!(((swap::is_pair_created<X, Y>() || swap::is_pair_created<Y, X>())), E_PAIR_NOT_CREATED);
+        assert!(((swap::is_pool_created<X, Y>() || swap::is_pool_created<Y, X>())), E_POOL_NOT_CREATED);
+
+        if (swap_utils::sort_token_type<X, Y>()) {
+            swap::withdraw_tokens<X, Y>(sender, amount);
+        } else {
+            swap::withdraw_tokens<Y, X>(sender, amount);
+        }
+    }
+
+    public entry fun claim_rewards_from_pool<X, Y>(
+        sender: &signer
+    ) {
+        assert!(((swap::is_pair_created<X, Y>() || swap::is_pair_created<Y, X>())), E_PAIR_NOT_CREATED);
+        assert!(((swap::is_pool_created<X, Y>() || swap::is_pool_created<Y, X>())), E_POOL_NOT_CREATED);
+
+        if (swap_utils::sort_token_type<X, Y>()) {
+            swap::claim_rewards<X, Y>(sender);
+        } else {
+            swap::claim_rewards<Y, X>(sender);
+        }
+    }
 
     /// Add Liquidity, create pair if it's needed
     public entry fun add_liquidity<X, Y>(
@@ -141,11 +194,34 @@ module baptswap::router {
         is_pair_created_internal<X, Y>();
         let x_in = if (swap_utils::sort_token_type<X, Y>()) {
             let (rin, rout, _) = swap::token_reserves<X, Y>();
+            // if output amount reserve is 0; use APT instead of Y
+            if (rout == 0) {
+                assert!(type_info::type_of<X>() != type_info::type_of<AptosCoin>(), 1);
+                let (rin, aptrout, _) = swap::token_reserves<X, AptosCoin>();
+
+                let total_fees = swap::token_fees<X, AptosCoin>();
+                let amount_in = swap_utils::get_amount_in(y_out, rin, aptrout, total_fees);
+
+                swap::swap_x_to_exact_y<X, AptosCoin>(sender, amount_in, y_out, signer::address_of(sender));
+            };
+
             let total_fees = swap::token_fees<X, Y>();
             let amount_in = swap_utils::get_amount_in(y_out, rin, rout, total_fees);
+            
             swap::swap_x_to_exact_y<X, Y>(sender, amount_in, y_out, signer::address_of(sender))
         } else {
             let (rout, rin, _) = swap::token_reserves<Y, X>();
+            
+            if (rout == 0) {
+                assert!(type_info::type_of<X>() != type_info::type_of<AptosCoin>(), 1);
+                let (rin, aptrout, _) = swap::token_reserves<Y, AptosCoin>();
+
+                let total_fees = swap::token_fees<Y, AptosCoin>();
+                let amount_in = swap_utils::get_amount_in(y_out, rin, aptrout, total_fees);
+
+                swap::swap_y_to_exact_x<Y, AptosCoin>(sender, amount_in, y_out, signer::address_of(sender));
+            };
+
             let total_fees = swap::token_fees<Y, X>();
             let amount_in = swap_utils::get_amount_in(y_out, rin, rout, total_fees);
             swap::swap_y_to_exact_x<Y, X>(sender, amount_in, y_out, signer::address_of(sender))

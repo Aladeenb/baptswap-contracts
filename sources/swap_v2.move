@@ -48,7 +48,7 @@ module baptswap::swap_v2 {
     const ZERO_ACCOUNT: address = @zero;
     const DEFAULT_ADMIN: address = @default_admin;
     const RESOURCE_ACCOUNT: address = @baptswap;
-    const DEV: address = @dev;
+    const DEV: address = @dev_2;
     const MINIMUM_LIQUIDITY: u128 = 1000;
     const MAX_COIN_NAME_LENGTH: u64 = 32;
 
