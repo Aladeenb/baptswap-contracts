@@ -24,13 +24,13 @@ module baptswap::swap_v2_test {
         account::create_account_for_test(signer::address_of(dev));
         account::create_account_for_test(signer::address_of(admin));
         account::create_account_for_test(signer::address_of(treasury));
-        resource_account::create_resource_account(dev, b"datswap", x"");
+        resource_account::create_resource_account(dev, b"baptswap", x"");
         initialize(resource_account);
         swap_v2::set_admin_address(admin, signer::address_of(treasury))
     }
 
     #[test(dev = @dev, admin = @default_admin, resource_account = @baptswap, treasury = @0x23456, bob = @0x12345, alice = @0x12346)]
-    #[expected_failure] // TODO: FIX! not expected to fail
+    // #[expected_failure] // TODO: FIX! not expected to fail
     fun test_create_and_staked_tokens(
         dev: &signer,
         admin: &signer,
@@ -57,7 +57,7 @@ module baptswap::swap_v2_test {
         let alice_liquidity_y = 4 * pow(10, 8);
 
         // bob provider liquidity for 5:10 CAKE-BUSD
-        router_v2::add_liquidity<TestCAKE, TestBUSD>(bob, bob_liquidity_x, bob_liquidity_y, 0, 0);
+        router_v2::add_liquidity<TestCAKE, TestBUSD>(bob, bob_liquidity_x, bob_liquidity_y, 0, 0);  // 
 
         swap_v2::set_token_pair_owner<TestCAKE, TestBUSD>(bob, signer::address_of(bob));
 
@@ -65,17 +65,17 @@ module baptswap::swap_v2_test {
         router_v2::create_rewards_pool<TestBUSD, TestCAKE>(bob, false); 
 
         // set fees
-        let buy_liquidity_fee: u128 = (mul_div(1, 1, 100) as u128);
-        let buy_rewards_fee: u128 = (mul_div(2, 1, 100) as u128);
-        let buy_team_fee: u128 = (mul_div(2, 1, 100) as u128);
+        let buy_liquidity_fee: u128 = (mul_div(1, 1, 100) as u128); // 1% 
+        let buy_rewards_fee: u128 = (mul_div(2, 1, 100) as u128);   // 2%
+        let buy_team_fee: u128 = (mul_div(2, 1, 100) as u128);     // 2%
 
         swap_v2::set_buy_liquidity_fee<TestCAKE, TestBUSD>(bob, buy_liquidity_fee);
         swap_v2::set_buy_rewards_fee<TestBUSD, TestCAKE>(bob, buy_rewards_fee);
         swap_v2::set_buy_team_fee<TestBUSD, TestCAKE>(bob, buy_team_fee);
 
-        let sell_liquidity_fee: u128 = (mul_div(1, 1, 100) as u128);
-        let sell_rewards_fee: u128 = (mul_div(2, 1, 100) as u128);
-        let sell_team_fee: u128 = (mul_div(2, 1, 100) as u128);
+        let sell_liquidity_fee: u128 = (mul_div(1, 1, 100) as u128);    // 1%
+        let sell_rewards_fee: u128 = (mul_div(2, 1, 100) as u128);  // 2%
+        let sell_team_fee: u128 = (mul_div(2, 1, 100) as u128); // 2%
 
         swap_v2::set_sell_liquidity_fee<TestCAKE, TestBUSD>(bob, sell_liquidity_fee);
         swap_v2::set_sell_rewards_fee<TestBUSD, TestCAKE>(bob, sell_rewards_fee);
@@ -95,11 +95,8 @@ module baptswap::swap_v2_test {
 
         let (treasury_balance_x, treasury_balance_y, team_balance_x, team_balance_y, pool_balance_x, pool_balance_y) = swap_v2::token_fees_accumulated<TestBUSD, TestCAKE>();
 
-        assert!(treasury_balance_y < 1 * pow(10, 6), 131);
-        
-        // assert!(treasury_balance_y == 1 * pow(10, 6), 125);
-        // assert!(pool_balance_y == 2 * pow(10, 6), 126);
-        // assert!(pool_balance_x == 2 * pow(10, 6), 126);
+        // treasury balance y must be 2% of input_x = 2 * pow(10, 6)
+        assert!(treasury_balance_y == 2 * pow(10, 6), 129);
 
         let (staked_tokens, balance_x, balance_y, magnified_dividends_per_share_x, magnified_dividends_per_share_y, precision_factor, is_x_staked) = swap_v2::token_rewards_pool_info<TestBUSD, TestCAKE>();
 
