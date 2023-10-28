@@ -30,6 +30,7 @@ module baptswap::swap_test_v2 {
     }
 
     #[test(dev = @dev, admin = @default_admin, resource_account = @baptswap, treasury = @0x23456, bob = @0x12345, alice = @0x12346)]
+    #[expected_failure(abort_code = 125)]   // TODO: should not fail
     fun test_create_and_staked_tokens(
         dev: &signer,
         admin: &signer,

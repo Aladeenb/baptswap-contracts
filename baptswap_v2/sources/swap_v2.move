@@ -1,7 +1,12 @@
-/// Uniswap v2 like token swap program
+/*
+
+    TODO: 
+        - fees must be collected upon fee extraction
+        - set_token_fees line 1429 needs to be changed; check swap_v2_draft
+*/
 module baptswap::swap_v2 {
     use std::signer;
-    use std::option;
+    use std::option::{Self, Option};
     use std::string;
     use aptos_std::type_info;
     use aptos_std::event;
@@ -61,6 +66,14 @@ module baptswap::swap_v2 {
 
     const BASE_LIQUIDITY_FEE: u128 = 20;
 
+    // Token Info; used to store the token owner and the token fee
+    struct TokenInfo<phantom CoinType> has key, store {
+        owner: address,
+        liquidity_fee: u128,
+        rewards_fee: u128,
+        team_fee: u128,
+    }
+
     /// The LP Token type
     struct LPToken<phantom X, phantom Y> has key {}
 
@@ -70,16 +83,20 @@ module baptswap::swap_v2 {
         creator: address,
         /// The admin of the token pair
         owner: address,
+        // The Token owner of token X; if off, rewards/team = 0; if on, it changes
+        token_x_info: Option<TokenInfo<X>>,
+        // The Token owner of token Y; if off, rewards/team = 0; if on, it changes
+        token_y_info: Option<TokenInfo<Y>>,
         /// It's reserve_x * reserve_y, as of immediately after the most recent liquidity event
         k_last: u128,
         /// The variable liquidity fee granted to providers
         liquidity_fee: u128,
+        /// The rewards fee; rewards fee X + rewards fee Y 
+        rewards_fee: u128,
+        /// The team fee; team fee X + team fee Y
+        team_fee: u128,       
         /// The BaptSwap treasury fee
         treasury_fee: u128,
-        /// The team fee
-        team_fee: u128,
-        /// The rewards fee
-        rewards_fee: u128,
         /// T0 token balance
         balance_x: coin::Coin<X>,
         /// T1 token balance
@@ -197,6 +214,12 @@ module baptswap::swap_v2 {
         });
     }
 
+    // TODO: init individual token fees;
+    // user will provide the pair he wants to toggle his fees on.
+    // he will then provide the fee he wants to set for the pair (fee_type + rate)
+    // (generic func that works on all types of fees)
+    // user have to be the coin owner
+
     public(friend) fun init_rewards_pool<X, Y>(
         sender: &signer,
         is_x_staked: bool
@@ -207,6 +230,7 @@ module baptswap::swap_v2 {
         let sender_addr = signer::address_of(sender);
 
         // Check the initializer is the owner of the traded pair
+        // TODO: should be the owners of the individual tokens?
         let metadata = borrow_global_mut<TokenPairMetadata<X, Y>>(RESOURCE_ACCOUNT);
         assert!(sender_addr == metadata.owner, ERROR_NOT_OWNER);
 
@@ -567,7 +591,7 @@ module baptswap::swap_v2 {
         coin::deposit<CoinType>(signer::address_of(receiver), extract_coin);
     }
 
-    /// Create the specified coin pair
+    /// Create the specified coin pair; all fees are toggled off
     public(friend) fun create_pair<X, Y>(
         sender: &signer,
     ) acquires SwapInfo {
@@ -577,7 +601,7 @@ module baptswap::swap_v2 {
         let swap_info = borrow_global_mut<SwapInfo>(RESOURCE_ACCOUNT);
         let resource_signer = account::create_signer_with_capability(&swap_info.signer_cap);
 
-        let lp_name: string::String = string::utf8(b"BaptSwap-");
+        let lp_name: string::String = string::utf8(b"Baptswap-");
         let name_x = coin::symbol<X>();
         let name_y = coin::symbol<Y>();
         string::append(&mut lp_name, name_x);
@@ -612,6 +636,8 @@ module baptswap::swap_v2 {
                 creator: sender_addr,
                 owner: ZERO_ACCOUNT,
                 k_last: 0,
+                token_x_info: option::none(),
+                token_y_info: option::none(),
                 liquidity_fee: 0,
                 treasury_fee: 10,
                 team_fee: 0,
@@ -650,7 +676,6 @@ module baptswap::swap_v2 {
                 token_y
             }
         );
-
 
         // create LP CoinStore , which is needed as a lock for minimum_liquidity
         register_lp<X, Y>(&resource_signer);
@@ -943,22 +968,21 @@ module baptswap::swap_v2 {
         // Grab token pair metadata
         let metadata = borrow_global_mut<TokenPairMetadata<X, Y>>(RESOURCE_ACCOUNT);
 
-        // Extract treasury fee <X>
-        let treasury_coins = coin::extract(&mut metadata.balance_x, (amount_to_treasury as u64));
-        coin::merge(&mut metadata.treasury_balance_x, treasury_coins);
+        // Extract treasury fee <Y>
+        let treasury_coins = coin::extract(&mut metadata.balance_y, (amount_to_treasury as u64));
+        coin::merge(&mut metadata.treasury_balance_y, treasury_coins);
 
-        // Extract team fee <X>
-        let team_coins = coin::extract(&mut metadata.balance_x, (amount_to_team as u64));
-        coin::merge(&mut metadata.team_balance_x, team_coins);
+        // Extract team fee <Y>
+        let team_coins = coin::extract(&mut metadata.balance_y, (amount_to_team as u64));
+        coin::merge(&mut metadata.team_balance_y, team_coins);
 
-        // Extract rewards fee <X> to pool
+        // Extract rewards fee <Y> to pool
         if (metadata.rewards_fee > 0) {
             let rewards_pool = borrow_global_mut<TokenPairRewardsPool<X, Y>>(RESOURCE_ACCOUNT);
-            let rewards_coins = coin::extract(&mut metadata.balance_x, (amount_to_rewards as u64));
-
+            let rewards_coins = coin::extract(&mut metadata.balance_y, (amount_to_rewards as u64));
             update_pool<X,Y>(rewards_pool, coin::value(&rewards_coins), 0);
 
-            coin::merge(&mut rewards_pool.balance_x, rewards_coins);
+            coin::merge(&mut rewards_pool.balance_y, rewards_coins);
         };
 
         // Update reserves
@@ -1010,22 +1034,21 @@ module baptswap::swap_v2 {
         // Grab token pair metadata
         let metadata = borrow_global_mut<TokenPairMetadata<X, Y>>(RESOURCE_ACCOUNT);
 
-        // Extract treasury fee <X>
-        let treasury_coins = coin::extract(&mut metadata.balance_x, (amount_to_treasury as u64));
-        coin::merge(&mut metadata.treasury_balance_x, treasury_coins);
+        // Extract treasury fee <Y>
+        let treasury_coins = coin::extract(&mut metadata.balance_y, (amount_to_treasury as u64));
+        coin::merge(&mut metadata.treasury_balance_y, treasury_coins);
 
-        // Extract team fee <X>
-        let team_coins = coin::extract(&mut metadata.balance_x, (amount_to_team as u64));
-        coin::merge(&mut metadata.team_balance_x, team_coins);
+        // Extract team fee <Y>
+        let team_coins = coin::extract(&mut metadata.balance_y, (amount_to_team as u64));
+        coin::merge(&mut metadata.team_balance_y, team_coins);
 
-        // Extract rewards fee <X> to pool
+        // Extract rewards fee <Y> to pool
         if (metadata.rewards_fee > 0) {
             let rewards_pool = borrow_global_mut<TokenPairRewardsPool<X, Y>>(RESOURCE_ACCOUNT);
-            let rewards_coins = coin::extract(&mut metadata.balance_x, (amount_to_rewards as u64));
-
+            let rewards_coins = coin::extract(&mut metadata.balance_y, (amount_to_rewards as u64));
             update_pool<X,Y>(rewards_pool, coin::value(&rewards_coins), 0);
 
-            coin::merge(&mut rewards_pool.balance_x, rewards_coins);
+            coin::merge(&mut rewards_pool.balance_y, rewards_coins);
         };
 
         // Update reserves
@@ -1035,6 +1058,19 @@ module baptswap::swap_v2 {
 
         assert!(coin::value<X>(&coins_x_out) == 0, ERROR_INSUFFICIENT_OUTPUT_AMOUNT);
         (coins_x_out, coins_y_out)
+    }
+
+    // swap_x_to_exact_y_indirect
+    // Swap X to Y, X is in and Y is out. This method assumes amount_out_min is 0
+    public(friend) fun swap_x_to_exact_y_indirect<X, Y, Z>(
+        coins_in: coin::Coin<X>, amount_out: u64
+    ): (coin::Coin<X>, coin::Coin<Y>, coin::Coin<Z>) acquires TokenPairReserve, TokenPairMetadata, TokenPairRewardsPool {
+        // Swap X for Z
+        let (coins_x_out, coins_x_z_out) = swap_x_to_exact_y_direct<X, Z>(coins_in, amount_out);
+
+        // Swap Z for Y
+        let (coins_z_y_out, coins_y_out) = swap_x_to_exact_y_direct<Z, Y>(coins_x_z_out, amount_out);
+        (coins_x_out, coins_y_out, coins_z_y_out)
     }
 
     /// Swap Y to X, Y is in and X is out. This method assumes amount_out_min is 0
@@ -1449,6 +1485,7 @@ module baptswap::swap_v2 {
 
     public entry fun withdraw_team_fee<X, Y>(sender: &signer) acquires TokenPairMetadata {
         let sender_addr = signer::address_of(sender);
+        
 
         if (swap_utils::sort_token_type<X, Y>()) {
             let metadata = borrow_global_mut<TokenPairMetadata<X, Y>>(RESOURCE_ACCOUNT);
@@ -1531,6 +1568,26 @@ module baptswap::swap_v2 {
         let resource_signer = account::create_signer_with_capability(&swap_info.signer_cap);
         code::publish_package_txn(&resource_signer, metadata_serialized, code);
     }
+
+    // --------------
+    // View Functions
+    // --------------
+
+    #[view]
+    // return pair resource if it's created
+    public fun get_pair<X, Y>(): TokenPairReserve<X, Y> acquires TokenPairReserve {
+        // assert pair is created
+        assert!(is_pair_created<X, Y>(), ERROR_POOL_NOT_CREATED);
+        let reserve = borrow_global<TokenPairReserve<X, Y>>(RESOURCE_ACCOUNT);
+        TokenPairReserve<X, Y> {
+            reserve_x: reserve.reserve_x,
+            reserve_y: reserve.reserve_y,
+            block_timestamp_last: reserve.block_timestamp_last
+        }
+    }
+
+
+
 
     #[test_only]
     public fun initialize(sender: &signer) {

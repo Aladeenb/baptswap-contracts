@@ -3,7 +3,7 @@ module baptswap::router_v2 {
     use aptos_framework::coin;
     use aptos_std::type_info;
     use baptswap::swap_utils;
-    use baptswap::swap_v2;
+    use baptswap::swap_v2::{Self, TokenPairReserve};
     use std::signer;
 
     //
@@ -36,6 +36,9 @@ module baptswap::router_v2 {
             swap_v2::create_pair<Y, X>(sender);
         }
     }
+
+    // TODO: toggle individual token fee; 
+    // this includes team/rewards/and part of liquidity fee
 
     public entry fun create_rewards_pool<X, Y>(
         sender: &signer,
@@ -122,6 +125,8 @@ module baptswap::router_v2 {
     fun is_pair_created_internal<X, Y>(){
         assert!(swap_v2::is_pair_created<X, Y>() || swap_v2::is_pair_created<Y, X>(), E_PAIR_NOT_CREATED);
     }
+
+    // TODO: if a pair not created, find route; should be used in swap 
 
     /// Remove Liquidity
     public entry fun remove_liquidity<X, Y>(
