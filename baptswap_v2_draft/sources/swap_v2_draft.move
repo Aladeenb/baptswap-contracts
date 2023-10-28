@@ -24,7 +24,7 @@
         - work on Errors in assert funcs.
         - add a func for the lp pair to send fees to their destiniation (liquidity?, team, rewards).
 */
-module baptswap::swap_v2 {
+module baptswap::swap_v2_draft {
     use std::signer;
     use std::option;
     use std::string;
@@ -43,7 +43,7 @@ module baptswap::swap_v2 {
     use baptswap::swap_utils;
     use baptswap::u256;
 
-    friend baptswap::router_v2;
+    friend baptswap::router_v2_draft;
 
     const ZERO_ACCOUNT: address = @zero;
     const DEFAULT_ADMIN: address = @default_admin;

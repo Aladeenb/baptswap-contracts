@@ -1,5 +1,5 @@
 /// Uniswap v2 like token swap program
-module baptswap::swap {
+module baptswap::swap_v2 {
     use std::signer;
     use std::option;
     use std::string;
@@ -16,7 +16,7 @@ module baptswap::swap {
     use baptswap::swap_utils;
     use baptswap::u256;
 
-    friend baptswap::router;
+    friend baptswap::router_v2;
 
     const ZERO_ACCOUNT: address = @zero;
     const DEFAULT_ADMIN: address = @default_admin;
