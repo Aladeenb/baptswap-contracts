@@ -2,21 +2,19 @@
     Description: 
         This module implements the core logic of the BaptswapV2. 
         It allows users to create token pairs, add liquidity, remove liquidity, swap tokens, and stake tokens. 
-        It also allows token owners to set individual token fees, withdraw team fees, and claim rewards.
+        It also allows token owners to set individual token fees and withdraw team fee.
         There are two fee types:
         - DEX fees: liquidity fee + treasury fee
         - Individual token fees: liquidity fee + rewards fee + team fee
 
     Note from the original code devs: 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        Please use swap_util::sort_token_type<X,Y>()
+        Please use swap_utils::sort_token_type<X,Y>()
         before using any function
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     TODO: 
-        - function to add individual token fees to a pair
-        - function to checks if the CoinType is registered in the pair <X, Y>
-        - for `distribute_individual_token_fees`: when extracting fees, we need to check if the token if fee is not zero (follow the same logic as in rewards_fees)
+        - function to check if the CoinType is registered in the pair <X, Y>
         - function to withdraw_rewards_fee
         - function to return token info of cointype
         - function to return rewards pool in a token pair
