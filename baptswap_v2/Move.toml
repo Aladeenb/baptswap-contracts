@@ -20,4 +20,7 @@ subdir = "aptos-move/framework/aptos-framework"
 [dependencies.BaptSwap]
 local = ".."
 
+[dependencies.CoinDeployer]
+local = "/home/lay/baptswap-contracts/baptswap_v2/CoinDeployer"
+
 [dev-dependencies]
