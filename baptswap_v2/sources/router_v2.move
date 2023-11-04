@@ -6,9 +6,9 @@ module baptswap::router_v2 {
     use baptswap::swap_v2::{Self, TokenPairReserve};
     use std::signer;
 
-    //
-    // Errors.
-    //
+    ///
+    /// Errors.
+    ///
 
     /// Output amount is less than required
     const E_OUTPUT_LESS_THAN_MIN: u64 = 0;
@@ -20,9 +20,9 @@ module baptswap::router_v2 {
     const E_INSUFFICIENT_Y_AMOUNT: u64 = 3;
     /// Pair is not created
     const E_PAIR_NOT_CREATED: u64 = 4;
-    // Pool already created
+    /// Pool already created
     const E_POOL_EXISTS: u64 = 5;
-    // Pool not created
+    /// Pool not created
     const E_POOL_NOT_CREATED: u64 = 6;
 
     /// Create a Pair from 2 Coins
@@ -37,8 +37,8 @@ module baptswap::router_v2 {
         }
     }
 
-    // TODO: toggle individual token fee; 
-    // this includes team/rewards/and part of liquidity fee
+    /// TODO: toggle individual token fee; 
+    /// this includes team/rewards/and part of liquidity fee
 
     public entry fun create_rewards_pool<X, Y>(
         sender: &signer,
@@ -126,7 +126,7 @@ module baptswap::router_v2 {
         assert!(swap_v2::is_pair_created<X, Y>() || swap_v2::is_pair_created<Y, X>(), E_PAIR_NOT_CREATED);
     }
 
-    // TODO: if a pair not created, find route; should be used in swap 
+    /// TODO: if a pair not created, find route; should be used in swap 
 
     /// Remove Liquidity
     public entry fun remove_liquidity<X, Y>(
@@ -199,7 +199,7 @@ module baptswap::router_v2 {
         is_pair_created_internal<X, Y>();
         let x_in = if (swap_utils::sort_token_type<X, Y>()) {
             let (rin, rout, _) = swap_v2::token_reserves<X, Y>();
-            // if output amount reserve is 0; use APT instead of Y
+            /// if output amount reserve is 0; use APT instead of Y
             if (rout == 0) {
                 assert!(type_info::type_of<X>() != type_info::type_of<AptosCoin>(), 1);
                 let (rin, aptrout, _) = swap_v2::token_reserves<X, AptosCoin>();

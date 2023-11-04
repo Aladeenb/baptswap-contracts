@@ -69,6 +69,9 @@ Insufficient Y
 
 <a name="0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_router_v2_E_OUTPUT_LESS_THAN_MIN"></a>
 
+
+Errors.
+
 Output amount is less than required
 
 
@@ -89,6 +92,7 @@ Pair is not created
 
 <a name="0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_router_v2_E_POOL_EXISTS"></a>
 
+Pool already created
 
 
 <pre><code><b>const</b> <a href="router_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_router_v2_E_POOL_EXISTS">E_POOL_EXISTS</a>: u64 = 5;
@@ -98,6 +102,7 @@ Pair is not created
 
 <a name="0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_router_v2_E_POOL_NOT_CREATED"></a>
 
+Pool not created
 
 
 <pre><code><b>const</b> <a href="router_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_router_v2_E_POOL_NOT_CREATED">E_POOL_NOT_CREATED</a>: u64 = 6;
@@ -122,6 +127,8 @@ Should revert if the pair is already created
 
 ## Function `create_rewards_pool`
 
+TODO: toggle individual token fee;
+this includes team/rewards/and part of liquidity fee
 
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="router_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_router_v2_create_rewards_pool">create_rewards_pool</a>&lt;X, Y&gt;(sender: &<a href="">signer</a>, is_x_staked: bool)
@@ -178,6 +185,7 @@ Add Liquidity, create pair if it's needed
 
 ## Function `remove_liquidity`
 
+TODO: if a pair not created, find route; should be used in swap
 Remove Liquidity
 
 

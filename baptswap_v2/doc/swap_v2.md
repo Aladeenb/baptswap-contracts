@@ -93,6 +93,10 @@
 
 ## Resource `TokenInfo`
 
+-------
+Structs
+-------
+used to store the token owner and the token fee; needed for Individual token fees
 
 
 <pre><code><b>struct</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_TokenInfo">TokenInfo</a>&lt;CoinType&gt; <b>has</b> <b>copy</b>, drop, store, key
@@ -104,6 +108,7 @@
 
 ## Resource `LPToken`
 
+The LP Token type
 
 
 <pre><code><b>struct</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_LPToken">LPToken</a>&lt;X, Y&gt; <b>has</b> key
@@ -115,6 +120,7 @@
 
 ## Resource `TokenPairMetadata`
 
+Stores the metadata required for the token pairs
 
 
 <pre><code><b>struct</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_TokenPairMetadata">TokenPairMetadata</a>&lt;X, Y&gt; <b>has</b> key
@@ -126,6 +132,7 @@
 
 ## Resource `TokenPairReserve`
 
+Stores the reservation info required for the token pairs
 
 
 <pre><code><b>struct</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_TokenPairReserve">TokenPairReserve</a>&lt;X, Y&gt; <b>has</b> key
@@ -137,6 +144,7 @@
 
 ## Resource `TokenPairRewardsPool`
 
+Stores the rewards pool info for token pairs
 
 
 <pre><code><b>struct</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_TokenPairRewardsPool">TokenPairRewardsPool</a>&lt;X, Y&gt; <b>has</b> key
@@ -159,6 +167,7 @@
 
 ## Resource `SwapInfo`
 
+Global storage for swap info
 
 
 <pre><code><b>struct</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_SwapInfo">SwapInfo</a> <b>has</b> key
@@ -170,6 +179,9 @@
 
 ## Struct `PairCreatedEvent`
 
+------
+Events
+------
 
 
 <pre><code><b>struct</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_PairCreatedEvent">PairCreatedEvent</a> <b>has</b> drop, store
@@ -302,6 +314,7 @@
 
 <a name="0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_DEX_FEE_THRESHOLD_NUMERATOR"></a>
 
+Max DEX fee: 0.9%; (90 / (100*100))
 
 
 <pre><code><b>const</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_DEX_FEE_THRESHOLD_NUMERATOR">DEX_FEE_THRESHOLD_NUMERATOR</a>: u128 = 90;
@@ -473,6 +486,9 @@
 
 <a name="0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_ERROR_ONLY_ADMIN"></a>
 
+------
+Errors
+------
 
 
 <pre><code><b>const</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_ERROR_ONLY_ADMIN">ERROR_ONLY_ADMIN</a>: u64 = 0;
@@ -527,6 +543,7 @@
 
 <a name="0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_INDIVIDUAL_TOKEN_FEE_THRESHOLD_NUMERATOR"></a>
 
+Max individual token fee: 15%; (1500 / (100*100))
 
 
 <pre><code><b>const</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_INDIVIDUAL_TOKEN_FEE_THRESHOLD_NUMERATOR">INDIVIDUAL_TOKEN_FEE_THRESHOLD_NUMERATOR</a>: u128 = 1500;
@@ -563,6 +580,10 @@
 
 <a name="0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_ZERO_ACCOUNT"></a>
 
+---------
+Constants
+---------
+addresses
 
 
 <pre><code><b>const</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_ZERO_ACCOUNT">ZERO_ACCOUNT</a>: <b>address</b> = 0x0;
@@ -574,6 +595,8 @@
 
 ## Function `init_individual_token`
 
+Initialize individual token fees;
+token owners will to specify the cointype and input the fees.
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_init_individual_token">init_individual_token</a>&lt;CoinType&gt;(sender: &<a href="">signer</a>, liquidity_fee: u128, rewards_fee: u128, team_fee: u128)
@@ -585,6 +608,7 @@
 
 ## Function `init_rewards_pool`
 
+Initialize rewards pool in a token pair
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_init_rewards_pool">init_rewards_pool</a>&lt;X, Y&gt;(sender: &<a href="">signer</a>, is_x_staked: bool)
@@ -596,6 +620,11 @@
 
 ## Function `add_liquidity`
 
+---------------
+Entry Functions
+---------------
+Add more liquidity to token types. This method explicitly assumes the
+min of both tokens are 0.
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_add_liquidity">add_liquidity</a>&lt;X, Y&gt;(sender: &<a href="">signer</a>, amount_x: u64, amount_y: u64): (u64, u64, u64)
@@ -607,6 +636,7 @@
 
 ## Function `remove_liquidity`
 
+Remove liquidity to token types.
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_remove_liquidity">remove_liquidity</a>&lt;X, Y&gt;(sender: &<a href="">signer</a>, liquidity: u64): (u64, u64)
@@ -640,6 +670,7 @@
 
 ## Function `stake_tokens`
 
+stake tokens in a token pair given an amount and a token pair
 
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_stake_tokens">stake_tokens</a>&lt;X, Y&gt;(sender: &<a href="">signer</a>, amount: u64)
@@ -662,6 +693,7 @@
 
 ## Function `claim_rewards`
 
+claim rewards from a token pair
 
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_claim_rewards">claim_rewards</a>&lt;X, Y&gt;(sender: &<a href="">signer</a>)
@@ -706,6 +738,7 @@
 
 ## Function `withdraw_team_fee`
 
+Withdraw team fee from pool; team x should get y and vice versa
 
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_withdraw_team_fee">withdraw_team_fee</a>&lt;CoinType, X, Y&gt;(sender: &<a href="">signer</a>)
@@ -717,6 +750,11 @@
 
 ## Function `register_pair`
 
+------------------
+Internal Functions
+------------------
+Register a pair; callable only by token owners
+TODO: explore better naming
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_register_pair">register_pair</a>&lt;CoinType, X, Y&gt;(sender: &<a href="">signer</a>)
@@ -728,6 +766,8 @@
 
 ## Function `toggle_all_individual_token_fees`
 
+Toggle fees
+toggle all individual token fees in a token pair; given CoinType, and a Token Pair
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_toggle_all_individual_token_fees">toggle_all_individual_token_fees</a>&lt;CoinType, X, Y&gt;(sender: &<a href="">signer</a>, activate: bool)
@@ -739,6 +779,7 @@
 
 ## Function `toggle_individual_token_liquidity_fee`
 
+Toggle liquidity fee
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_toggle_individual_token_liquidity_fee">toggle_individual_token_liquidity_fee</a>&lt;CoinType, X, Y&gt;(sender: &<a href="">signer</a>, activate: bool)
@@ -750,6 +791,7 @@
 
 ## Function `toggle_individual_token_team_fee`
 
+toggle team fee
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_toggle_individual_token_team_fee">toggle_individual_token_team_fee</a>&lt;CoinType, X, Y&gt;(sender: &<a href="">signer</a>, activate: bool)
@@ -761,6 +803,7 @@
 
 ## Function `toggle_individual_token_rewards_fee`
 
+toggle liquidity fee
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_toggle_individual_token_rewards_fee">toggle_individual_token_rewards_fee</a>&lt;CoinType, X, Y&gt;(sender: &<a href="">signer</a>, activate: bool)
@@ -772,6 +815,7 @@
 
 ## Function `create_pair`
 
+Create the specified coin pair; all fees are toggled off
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_create_pair">create_pair</a>&lt;X, Y&gt;(sender: &<a href="">signer</a>)
@@ -783,6 +827,7 @@
 
 ## Function `swap_exact_x_to_y`
 
+Swap X to Y, X is in and Y is out. This method assumes amount_out_min is 0
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_swap_exact_x_to_y">swap_exact_x_to_y</a>&lt;X, Y&gt;(sender: &<a href="">signer</a>, amount_in: u64, <b>to</b>: <b>address</b>): u64
@@ -794,6 +839,7 @@
 
 ## Function `swap_exact_x_to_y_direct`
 
+Swap X to Y, X is in and Y is out. This method assumes amount_out_min is 0
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_swap_exact_x_to_y_direct">swap_exact_x_to_y_direct</a>&lt;X, Y&gt;(coins_in: <a href="_Coin">coin::Coin</a>&lt;X&gt;): (<a href="_Coin">coin::Coin</a>&lt;X&gt;, <a href="_Coin">coin::Coin</a>&lt;Y&gt;)
@@ -957,6 +1003,7 @@ Swap Y to X, Y is in and X is out. This method assumes amount_out_min is 0
 
 ## Function `total_lp_supply`
 
+Get the total supply of LP Tokens
 
 
 <pre><code>#[view]
@@ -969,6 +1016,7 @@ Swap Y to X, Y is in and X is out. This method assumes amount_out_min is 0
 
 ## Function `token_fees`
 
+Get the current fees for a token pair
 
 
 <pre><code>#[view]
@@ -993,6 +1041,7 @@ Swap Y to X, Y is in and X is out. This method assumes amount_out_min is 0
 
 ## Function `token_reserves`
 
+Get the current reserves of T0 and T1 with the latest updated timestamp
 
 
 <pre><code>#[view]
@@ -1005,6 +1054,7 @@ Swap Y to X, Y is in and X is out. This method assumes amount_out_min is 0
 
 ## Function `token_balances`
 
+The amount of balance currently in pools of the liquidity pair
 
 
 <pre><code>#[view]
@@ -1041,6 +1091,8 @@ Swap Y to X, Y is in and X is out. This method assumes amount_out_min is 0
 
 ## Function `lp_balance`
 
+Obtain the LP token balance of <code>addr</code>.
+This method can only be used to check other users' balance.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_lp_balance">lp_balance</a>&lt;X, Y&gt;(addr: <b>address</b>): u64
@@ -1063,6 +1115,11 @@ Swap Y to X, Y is in and X is out. This method assumes amount_out_min is 0
 
 ## Function `set_dex_liquidity_fee`
 
+--------
+Mutators
+--------
+Callable only by DEX Owner
+set dex liquidity fee
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_set_dex_liquidity_fee">set_dex_liquidity_fee</a>(sender: &<a href="">signer</a>, new_fee: u128)
@@ -1074,6 +1131,7 @@ Swap Y to X, Y is in and X is out. This method assumes amount_out_min is 0
 
 ## Function `ser_dex_treasury_fee`
 
+set dex treasury fee
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_ser_dex_treasury_fee">ser_dex_treasury_fee</a>(sender: &<a href="">signer</a>, new_fee: u128)
@@ -1085,6 +1143,8 @@ Swap Y to X, Y is in and X is out. This method assumes amount_out_min is 0
 
 ## Function `set_individual_token_liquidity_fee`
 
+Callable only by token owners
+update individual token liquidity fee
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_set_individual_token_liquidity_fee">set_individual_token_liquidity_fee</a>&lt;CoinType&gt;(sender: &<a href="">signer</a>, new_fee: u128)
@@ -1096,6 +1156,7 @@ Swap Y to X, Y is in and X is out. This method assumes amount_out_min is 0
 
 ## Function `set_individual_token_team_fee`
 
+set individual token team fee
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_set_individual_token_team_fee">set_individual_token_team_fee</a>&lt;CoinType&gt;(sender: &<a href="">signer</a>, new_fee: u128)
@@ -1107,6 +1168,7 @@ Swap Y to X, Y is in and X is out. This method assumes amount_out_min is 0
 
 ## Function `set_individual_token_rewards_fee`
 
+set individual token rewards fee
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="swap_v2.md#0x90fdf0b1ef78d8dc098e1e7cd3b6fe1f084c808484bc243a1da2a24e7ef06096_swap_v2_set_individual_token_rewards_fee">set_individual_token_rewards_fee</a>&lt;CoinType&gt;(sender: &<a href="">signer</a>, new_fee: u128)
@@ -1118,6 +1180,7 @@ Swap Y to X, Y is in and X is out. This method assumes amount_out_min is 0
 
 ## Function `get_reserve`
 
+return pair reserve if it's created
 
 
 <pre><code>#[view]
